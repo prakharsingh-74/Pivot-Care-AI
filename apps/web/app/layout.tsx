@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
 import { Providers } from "@/components/providers"
-import { AuthGuard } from "@/modules/auth/ui/components/auth-guard"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -27,9 +26,7 @@ export default function RootLayout({
       >
         <ClerkProvider>
           <Providers>
-            <AuthGuard>
               {children}
-            </AuthGuard>
           </Providers>
         </ClerkProvider>
       </body>
