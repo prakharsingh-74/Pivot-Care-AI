@@ -6,6 +6,7 @@ import { WidgetAuthScreen } from "@/modules/widget/ui/screens/widget-auth-screen
 import { WidgetErrorScreen } from "@/modules/widget/ui/screens/widget-error-screen";
 import { WidgetLoadingScreen } from "@/modules/widget/ui/screens/widget-loading-screen";
 import { WidgetSelectionScreen } from "@/modules/widget/ui/screens/widget-selection-screen";
+import { WidgetChatScreen } from "@/modules/widget/ui/screens/widget-chat-screen";
 
 interface Props{
     organizationId: string | null;
@@ -21,7 +22,7 @@ export default function WidgetView({organizationId}: Props){
         voice: <p>TODO: Voice</p>,
         inbox: <p>TODO: Inbox</p>,
         selection: <WidgetSelectionScreen/>,
-        chat: <p>TODO: Chat</p>,
+        chat: <WidgetChatScreen/>,
         contact: <p>TODO: Contact</p>,
     }
 
