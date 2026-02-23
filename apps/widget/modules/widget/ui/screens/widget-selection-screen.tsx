@@ -8,6 +8,7 @@ import { useSetAtom, useAtomValue } from "jotai";
 import { screenAtom, organizationIdAtom, contactSessionIdAtomFamily, errorMessageAtom, conversationIdAtom } from "@/modules/widget/atoms/widget-atoms";
 import { useMutation } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
+import { WidgetFooter } from "@/modules/widget/ui/components/widget-footer";
 
 export const WidgetSelectionScreen = () => {
     const setScreen = useSetAtom(screenAtom);
@@ -74,6 +75,7 @@ export const WidgetSelectionScreen = () => {
                 <ChevronRightIcon/>
              </Button>
         </div>
+        <WidgetFooter/>
         </>
     )
 }
