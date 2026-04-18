@@ -1,4 +1,4 @@
-# Pivot Care AI — Project Documentation
+# Pivot Care AI
 
 ## 1. Project Overview
 
@@ -959,7 +959,7 @@ This deploys the schema and all Convex functions. You should see output indicati
 From the **project root**, start everything in parallel:
 
 ```bash
-pnpm dev
+turbo dev
 ```
 
 This starts (via Turborepo):
