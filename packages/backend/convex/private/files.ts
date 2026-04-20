@@ -73,11 +73,7 @@ export const deleteFile = mutation({
     }
 
     if (entry.metadata?.storageId) {
-      try {
-        await ctx.storage.delete(entry.metadata.storageId as Id<"_storage">);
-      } catch (error) {
-        console.warn("Storage deletion failed, entry might be missing. Proceeding with metadata cleanup.", error);
-      }
+      await ctx.storage.delete(entry.metadata.storageId as Id<"_storage">);
     }
 
     await rag.deleteAsync(ctx, {

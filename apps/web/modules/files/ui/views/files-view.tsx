@@ -17,7 +17,7 @@ import {
 } from "@workspace/ui/components/table";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
-import { useMutation, usePaginatedQuery } from "convex/react";
+import { usePaginatedQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import type { PublicFile } from "@workspace/backend/private/files";
 import { Button } from "@workspace/ui/components/button";
@@ -30,6 +30,7 @@ import {
 import { Badge } from "@workspace/ui/components/badge";
 import { UploadDialog } from "../components/upload-dialog";
 import { useState } from "react";
+import { DeleteFileDialog } from "../components/delete-file-dialog";
 
 export const FilesView = () => {
   const files = usePaginatedQuery(
@@ -52,10 +53,27 @@ export const FilesView = () => {
     loadSize: 10,
   });
 
-  const removeFile = useMutation(api.private.files.deleteFile);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const [selectedFile, setSelectedFile] = useState<PublicFile | null>(null);
+  const handleDeleteClick = (file: PublicFile) => {
+    setSelectedFile(file);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleFileDeleted = () => {
+    setSelectedFile(null);
+  };
+
   return (
     <>
+    <DeleteFileDialog
+      open={deleteDialogOpen}
+      onOpenChange={setDeleteDialogOpen}
+      file={selectedFile}
+      onDeleted={handleFileDeleted}
+    />
     <UploadDialog
         onOpenChange={setUploadDialogOpen}
         open={uploadDialogOpen}
@@ -148,7 +166,7 @@ export const FilesView = () => {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => removeFile({ entryId: file.id })}
+                              onClick={() => handleDeleteClick(file)}
                             >
                               <TrashIcon className="mr-2 size-4" />
                               Delete
