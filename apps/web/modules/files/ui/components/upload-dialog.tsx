@@ -24,12 +24,13 @@ import {
 interface UploadDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onFileUploaded?: () => void;
 };
 
 export const UploadDialog = ({
     open,
     onOpenChange,
-    onOpenFileUploaded
+    onFileUploaded
 }: UploadDialogProps) => {
     const addFile = useAction(api.private.files.addFile);
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);

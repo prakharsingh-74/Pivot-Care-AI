@@ -17,7 +17,7 @@ import {
 } from "@workspace/ui/components/table";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
-import { usePaginatedQuery } from "convex/react";
+import { useMutation, usePaginatedQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import type { PublicFile } from "@workspace/backend/private/files";
 import { Button } from "@workspace/ui/components/button";
@@ -52,6 +52,7 @@ export const FilesView = () => {
     loadSize: 10,
   });
 
+  const removeFile = useMutation(api.private.files.deleteFile);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   return (
     <>
@@ -147,7 +148,7 @@ export const FilesView = () => {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => {}}
+                              onClick={() => removeFile({ entryId: file.id })}
                             >
                               <TrashIcon className="mr-2 size-4" />
                               Delete

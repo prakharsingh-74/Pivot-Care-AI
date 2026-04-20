@@ -3,7 +3,7 @@ import { RAG } from "@convex-dev/rag";
 import { components } from "../../_generated/api";
 
 const rag = new RAG(components.rag, {
-  textEmbeddingModel: google.embedding("gemini-embedding-001") as any,
+  textEmbeddingModel: google.textEmbeddingModel("gemini-embedding-001") as any,
   embeddingDimension: 768,
 });
 

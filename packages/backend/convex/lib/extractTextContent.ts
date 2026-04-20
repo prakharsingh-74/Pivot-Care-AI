@@ -5,9 +5,9 @@ import { assert } from "convex-helpers";
 import { Id } from "../_generated/dataModel";
 
 const AI_MODELS = {
-    image: google.chat("gemini-2.5-flash"),
-    html: google.chat("gemini-2.5-flash"),
-    pdf: google.chat("gemini-2.5-flash"),
+    image: google("gemini-1.5-flash"),
+    html: google("gemini-1.5-flash"),
+    pdf: google("gemini-1.5-flash"),
 } as const;
 
 const SUPPORTED_IMAGE_TYPES = [
@@ -105,7 +105,7 @@ async function extractPdfText(
             {
                 role: "user",
                 content: [
-                    { type: "file", data: new URL(url), mimeType, filename },
+                    { type: "file", data: new URL(url), mediaType: mimeType, filename },
                     {
                         type: "text",
                         text: "Extract the text from the PDF and print it without explaining you'll do so.",
