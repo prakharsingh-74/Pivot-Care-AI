@@ -1,10 +1,12 @@
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { Agent } from "@convex-dev/agent";
 import { components } from "../../../_generated/api"
 
 export const supportAgent = new Agent(components.agent,{
     name: "supportAgent",
-    languageModel: google("gemini-1.5-flash"),
-    instructions: `You are a customer support agent. Use "resolveConversation" tool when user expresses finalization of the conversation.
+    languageModel: openai("gpt-4o"),
+    instructions: `You are a customer support agent. 
+    ALWAYS search the knowledge base using the "search" tool before answering any question to provide accurate and specific information.
+    Use "resolveConversation" tool when user expresses finalization of the conversation.
     Use "escalateConversation" tool when user expresses frustration or requests a human operator explicitly.`,
 })

@@ -8,7 +8,7 @@ import { cn } from "@workspace/ui/lib/utils";
 
 export type AIResponseProps = HTMLAttributes<HTMLDivElement> & {
   options?: Options;
-  children: Options["children"];
+  children: any;
 };
 
 const components: Options["components"] = {
@@ -84,23 +84,43 @@ const components: Options["components"] = {
 };
 
 export const AIResponse = memo(
-  ({ className, options, children, ...props }: AIResponseProps) => (
-    <div
-      className={cn(
-        "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
-        className,
-      )}
-      {...props}
-    >
-      <ReactMarkdown
-        components={components}
-        remarkPlugins={[remarkGfm]}
-        {...options}
+  ({ className, options, children, ...props }: AIResponseProps) => {
+    let text = "";
+    if (typeof children === "string") {
+      text = children;
+    } else if (Array.isArray(children)) {
+      text = children
+        .filter((part) => part && typeof part === "object" && part.type === "text")
+        .map((part) => part.text)
+        .join("");
+    } else if (children && typeof children === "object") {
+      // Handle cases where children might be a single content part or have a text property
+      text = (children as any).text || (children as any).content || "";
+    }
+
+    // If still empty, try to stringify if it's not null/undefined
+    if (!text && children !== null && children !== undefined) {
+      text = String(children);
+    }
+
+    return (
+      <div
+        className={cn(
+          "size-full min-h-[1em] [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
+          className,
+        )}
+        {...props}
       >
-        {children}
-      </ReactMarkdown>
-    </div>
-  ),
+        <ReactMarkdown
+          components={components}
+          remarkPlugins={[remarkGfm]}
+          {...options}
+        >
+          {text}
+        </ReactMarkdown>
+      </div>
+    );
+  },
   (prevProps, nextProps) => prevProps.children === nextProps.children,
 );
 

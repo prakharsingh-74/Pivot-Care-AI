@@ -5,7 +5,7 @@ import { components } from "../_generated/api";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { paginationOptsValidator } from "convex/server";
 import { saveMessage } from "@convex-dev/agent";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 
 export const enhanceResponse = action({
   args: {
@@ -31,7 +31,7 @@ export const enhanceResponse = action({
     }
 
     const response = await generateText({
-        model: google("gemini-1.5-flash"),
+        model: openai("gpt-4o"),
         messages: [
             {
                 role: "system",
