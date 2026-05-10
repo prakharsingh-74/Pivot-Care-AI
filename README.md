@@ -2,13 +2,13 @@
 
 ## 1. Project Overview
 
-**Pivot Care AI** is an **AI-powered customer support SaaS platform** that enables organizations to embed a chat widget on their websites. The widget automatically handles customer conversations using an AI agent (Google Gemini), with the ability to **escalate to human operators** when needed. Organization operators manage conversations through a dedicated dashboard.
+**Pivot Care AI** is an **AI-powered customer support SaaS platform** that enables organizations to embed a chat widget on their websites. The widget automatically handles customer conversations using an AI agent (OpenAI), with the ability to **escalate to human operators** when needed. Organization operators manage conversations through a dedicated dashboard.
 
 ### Core Value Proposition
 
 | Capability | Description |
 |---|---|
-| 🤖 AI-First Support | Automated customer support powered by Google Gemini 2.5 Flash |
+| 🤖 AI-First Support | Automated customer support powered by OpenAI GPT-4o |
 | 💬 Embeddable Widget | Drop-in chat widget with multi-screen flow (auth → inbox → chat → voice) |
 | 📊 Operator Dashboard | Real-time conversation management with status filtering & AI-enhanced replies |
 | 🔄 Smart Escalation | AI auto-escalates to humans on frustration detection; auto-resolves on closure |
@@ -26,7 +26,7 @@
 | **UI Components** | shadcn/ui + Radix UI + Tailwind CSS 4 | Design system & accessible components |
 | **State Management** | Jotai | Atomic client-side state |
 | **Backend** | Convex | Real-time serverless database & functions |
-| **AI Agent** | `@convex-dev/agent` + Google Gemini 2.5 Flash | Conversational AI with tool use |
+| **AI Agent** | `@convex-dev/agent` + OpenAI GPT-4o | Conversational AI with tool use |
 | **AI SDK** | Vercel AI SDK (`ai` package) | Text generation for message enhancement |
 | **Authentication** | Clerk | Multi-tenant auth with organization support |
 | **Voice** | VAPI (`@vapi-ai/web`) | Real-time voice calls in widget |
@@ -119,13 +119,13 @@ graph LR
         subgraph "System (Internal)"
             SYS_CONV["conversations"]
             SYS_CS["contactSessions"]
-            AI_AGENT["🤖 AI Agent<br/>(Gemini 2.5 Flash)"]
+            AI_AGENT["🤖 AI Agent<br/>(OpenAI GPT-4o)"]
         end
         DB[("📦 Convex DB<br/>conversations<br/>contactSessions<br/>users")]
     end
 
     subgraph "External Services"
-        GEMINI["🧠 Google Gemini"]
+        OPENAI["🧠 OpenAI"]
         VAPI["🎙️ VAPI Voice"]
         SENTRY["📊 Sentry"]
     end
@@ -136,8 +136,8 @@ graph LR
     WIDGET_APP --> PUB_CONV & PUB_MSG & PUB_CS & PUB_ORG
     DASH_APP --> PRIV_CONV & PRIV_MSG
     PUB_MSG --> AI_AGENT
-    PRIV_MSG --> GEMINI
-    AI_AGENT --> GEMINI
+    PRIV_MSG --> OPENAI
+    AI_AGENT --> OPENAI
     AI_AGENT --> SYS_CONV
     PUB_CONV & PUB_MSG & PUB_CS & PRIV_CONV & PRIV_MSG --> DB
     WIDGET_APP -.-> VAPI
@@ -236,7 +236,7 @@ graph TB
     ST2 -->|"runMutation"| SC
     DC -->|"auth check"| CLERK_AUTH["Clerk Identity"]
     DM -->|"auth check"| CLERK_AUTH
-    DM -->|"enhanceResponse"| GEMINI_API["Gemini 2.5 Flash"]
+    DM -->|"enhanceResponse"| OPENAI_API["OpenAI GPT-4o"]
 
     style PC fill:#2563eb,color:#fff
     style PM fill:#2563eb,color:#fff
@@ -295,7 +295,7 @@ graph TD
     USER_MSG["📨 Customer Message"]
     
     subgraph "Support Agent Pipeline"
-        AGENT["🤖 Support Agent<br/><code>@convex-dev/agent</code><br/>Model: Gemini 2.5 Flash"]
+        AGENT["🤖 Support Agent<br/><code>@convex-dev/agent</code><br/>Model: OpenAI GPT-4o"]
         
         subgraph "Instructions"
             INST["System Prompt:<br/>• Resolve when user finalizes<br/>• Escalate on frustration or<br/>explicit human request"]
@@ -327,7 +327,7 @@ graph TD
 
 1. Customer sends a message via the widget → `public/messages.create` action
 2. If conversation is **unresolved**: triggers `supportAgent.generateText()` with the user's prompt and both tools
-3. The AI agent (Gemini 2.5 Flash) processes the message and decides to:
+3. The AI agent (OpenAI GPT-4o) processes the message and decides to:
    - **Reply normally** — generates a helpful response
    - **Resolve** — calls `resolveConversation` tool → sets status to `resolved` + saves confirmation
    - **Escalate** — calls `escalateConversation` tool → sets status to `escalated` + saves notification
@@ -341,7 +341,7 @@ sequenceDiagram
     participant Op as 👨‍💼 Operator
     participant Dash as Dashboard
     participant Conv as Convex Action
-    participant Gem as Gemini 2.5 Flash
+    participant Gem as OpenAI GPT-4o
 
     Op->>Dash: Types draft reply
     Op->>Dash: Clicks "Enhance"
@@ -610,7 +610,7 @@ sequenceDiagram
 | `CONVEX_URL` | Convex API URL |
 | `CLERK_JWT_ISSUER_DOMAIN` | Clerk JWT domain for Convex auth |
 | `CLERK_SECRET_KEY` | Clerk secret for org validation |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Gemini API key for AI agent |
+| `OPENAI_API_KEY` | OpenAI API key for AI agent |
 
 ### `apps/widget` (.env)
 
@@ -791,7 +791,7 @@ You will also need accounts on these services (all have free tiers):
 |---|---|---|
 | **Clerk** | Authentication & organization management | [clerk.com](https://clerk.com/) |
 | **Convex** | Backend database & serverless functions | [convex.dev](https://convex.dev/) |
-| **Google AI Studio** | Gemini API key for AI agent | [aistudio.google.com](https://aistudio.google.com/) |
+| **OpenAI** | OpenAI API key for AI agent | [platform.openai.com](https://platform.openai.com/) |
 | **Sentry** *(optional)* | Error tracking | [sentry.io](https://sentry.io/) |
 
 ---
