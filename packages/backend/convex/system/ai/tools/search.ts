@@ -5,6 +5,7 @@ import { generateText } from "ai";
 import { internal } from "../../../_generated/api";
 import { supportAgent } from "../agents/supportAgent";
 import rag from "../rag"; 
+import { SEARCH_INTERPRETER_PROMPT } from "../constants";
 
 export const search = createTool({
   description: "Search the knowledge base for the relevant information to help answer user questions",
@@ -44,7 +45,7 @@ export const search = createTool({
       messages: [
         {
           role: "system",
-          content: "You interpret knowledge base search results and provide helpful, accurate answers to user questions"
+          content: SEARCH_INTERPRETER_PROMPT,
         },
         {
           role: "user",
