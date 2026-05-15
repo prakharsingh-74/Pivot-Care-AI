@@ -32,6 +32,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@workspace/ui/components/button";
+import { VapiConnectedView } from "../../components/vapi-connected-view";
 
 const vapiFeatures: Feature[] = [
   {
@@ -159,12 +160,53 @@ const VapiPluginForm = ({
   );
 };
 
+const VapiPluginRemoveForm = ({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) => {
+  const removePlugin = useMutation(api.private.plugins.remove);
+
+  const onSubmit = async () => {
+    try {
+      await removePlugin({
+        service: "vapi",
+      });
+      setOpen(false);
+      toast.success("Vapi plugin removed successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
+  };
+
+  return (
+    <Dialog onOpenChange={setOpen} open={open}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Disconnect Vapi</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>
+          Are you sure want to disconnect Vapi plugin?
+        </DialogDescription>
+        <DialogFooter>
+           <Button onClick={onSubmit} variant="destructive">
+             Disconnect
+           </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export const VapiView = () => {
   const vapiPlugin = useQuery(api.private.plugins.getOne, { service: "vapi" });
   const [connectOpen, setConnectOpen] = useState(false);
   const [removeOpen, setRemoveOpen] = useState(false);
 
-  const handleSubmit = () => {
+  const toggleConnection = () => {
     if (vapiPlugin) {
       setRemoveOpen(true);
     } else {
@@ -175,6 +217,7 @@ export const VapiView = () => {
   return (
     <>
       <VapiPluginForm open={connectOpen} setOpen={setConnectOpen} />
+      <VapiPluginRemoveForm open={removeOpen} setOpen={setRemoveOpen} />
       <div className="flex min-h-screen flex-col bg-muted p-8">
         <div className="mx-auto w-full max-w-screen-md">
           <div className="space-y-2">
@@ -185,14 +228,14 @@ export const VapiView = () => {
           </div>
           <div className="mt-8">
             {vapiPlugin ? (
-              <p>Connected!!</p>
+              <VapiConnectedView onDisconnect={toggleConnection}/>
             ) : (
               <PluginCard
                 serviceImage="/logo.svg"
                 serviceName="Vapi"
                 features={vapiFeatures}
                 isDisabled={vapiPlugin === undefined}
-                onSubmit={handleSubmit}
+                onSubmit={toggleConnection}
               />
             )}
           </div>
