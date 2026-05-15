@@ -113,7 +113,6 @@ export const FilesView = () => {
                         <TableCell
                           colSpan={4}
                           className="h-24 text-center"
-                          colSpan={4}
                         >
                           Loading files...
                         </TableCell>
@@ -126,7 +125,6 @@ export const FilesView = () => {
                         <TableCell
                           colSpan={4}
                           className="h-24 text-center"
-                          colSpan={4}
                         >
                           No files found
                         </TableCell>
