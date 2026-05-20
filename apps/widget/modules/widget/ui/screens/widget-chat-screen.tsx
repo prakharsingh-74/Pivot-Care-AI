@@ -23,7 +23,6 @@ import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-
 import {
   AIConversation,
   AIConversationContent,
-  AIConversationScrollButton,
 } from "@workspace/ui/components/ai/conversation";
 import { Form, FormField } from "@workspace/ui/components/form";
 import {
