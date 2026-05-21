@@ -26,7 +26,6 @@ import {
     SidebarRail
 } from "@workspace/ui/components/sidebar";
 import { cn } from "@workspace/ui/lib/utils";
-import { title } from "node:process";
 
 const customerSupportItems = [
     {
