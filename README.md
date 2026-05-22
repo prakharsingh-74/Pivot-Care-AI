@@ -43,6 +43,7 @@ graph TB
     subgraph "Applications (apps/)"
         WEB["🌐 apps/web<br/><i>Operator Dashboard</i><br/>Next.js · Port 3000"]
         WIDGET["💬 apps/widget<br/><i>Embeddable Chat Widget</i><br/>Next.js · Port 3001"]
+        EMBED["🔗 apps/embed<br/><i>Embeddable JS Library</i><br/>Vite · Port 3002"]
     end
 
     subgraph "Shared Packages (packages/)"
@@ -63,9 +64,12 @@ graph TB
     WEB -.->|"dev dependency"| TSCONFIG
     WIDGET -.->|"dev dependency"| ESLINT
     WIDGET -.->|"dev dependency"| TSCONFIG
+    EMBED -.->|"dev dependency"| ESLINT
+    EMBED -.->|"dev dependency"| TSCONFIG
 
     style WEB fill:#1e40af,color:#fff
     style WIDGET fill:#7c3aed,color:#fff
+    style EMBED fill:#0891b2,color:#fff
     style BACKEND fill:#059669,color:#fff
     style UI fill:#d97706,color:#fff
     style MATH fill:#6b7280,color:#fff
@@ -79,6 +83,7 @@ graph TB
 |---|---|---|
 | `apps/web` | `web` | Operator dashboard — Clerk-authenticated, Next.js app with conversation management |
 | `apps/widget` | `widget` | Customer-facing embeddable chat widget — session-based auth, multi-screen flow |
+| `apps/embed` | `embed` | Embeddable JS library — Vite-built integration script for embedding the widget on any site |
 | `packages/backend` | `@workspace/backend` | Convex backend — schema, queries, mutations, actions, AI agent |
 | `packages/ui` | `@workspace/ui` | 60+ shared shadcn/ui components (button, dialog, sidebar, chart, etc.) |
 | `packages/math` | `@workspace/math` | Simple math utility (add/subtract) — likely a monorepo template remnant |
@@ -178,6 +183,27 @@ erDiagram
         string name
     }
 
+    widgetSettings {
+        id _id PK
+        string organizationId "Clerk Org ID"
+        string greetMessage "Widget greeting message"
+        object defaultSuggestions "Optional prompt suggestions (1-3)"
+        object vapiSettings "VAPI assistantId & phoneNumber"
+    }
+
+    subscriptions {
+        id _id PK
+        string organizationId "Clerk Org ID"
+        string status "Subscription status"
+    }
+
+    plugins {
+        id _id PK
+        string organizationId "Clerk Org ID"
+        string service "Service type (vapi)"
+        string secretName "AWS Secrets Manager reference"
+    }
+
     conversations }|--|| contactSessions : "belongs to"
 ```
 
@@ -191,6 +217,10 @@ erDiagram
 | `conversations` | `by_status_and_organization_id` | `status`, `organizationId` | Filtered dashboard queries |
 | `contactSessions` | `by_organization_id` | `organizationId` | Org-scoped session lookup |
 | `contactSessions` | `by_expires_at` | `expiresAt` | Session cleanup |
+| `widgetSettings` | `by_organization_id` | `organizationId` | Org-scoped settings lookup |
+| `subscriptions` | `by_organization_id` | `organizationId` | Org-scoped subscription lookup |
+| `plugins` | `by_organization_id` | `organizationId` | Org-scoped plugin lookup |
+| `plugins` | `by_organization_id_and_service` | `organizationId`, `service` | Plugin lookup by org + service type |
 
 ### Contact Session Metadata Schema
 
@@ -596,11 +626,13 @@ sequenceDiagram
 | Variable | Description |
 |---|---|
 | `NEXT_PUBLIC_CONVEX_URL` | Convex deployment URL |
+| `NEXT_PUBLIC_CLERK_FRONTEND_API_URL` | Clerk frontend API URL |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk public key |
 | `CLERK_SECRET_KEY` | Clerk server-side key |
 | `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | Sign-in route (`/sign-in`) |
 | `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | Sign-up route (`/sign-up`) |
 | `SENTRY_AUTH_TOKEN` | Sentry error tracking token |
+| `OPENAI_API_KEY` | OPENAI API |
 
 ### `packages/backend` (.env)
 
@@ -608,9 +640,14 @@ sequenceDiagram
 |---|---|
 | `CONVEX_DEPLOYMENT` | Convex deployment identifier |
 | `CONVEX_URL` | Convex API URL |
+| `CONVEX_SITE_URL` | Convex site URL for HTTP actions |
 | `CLERK_JWT_ISSUER_DOMAIN` | Clerk JWT domain for Convex auth |
 | `CLERK_SECRET_KEY` | Clerk secret for org validation |
+| `CLERK_WEBHOOK_SECRET` | Clerk webhook signing secret |
 | `OPENAI_API_KEY` | OpenAI API key for AI agent |
+| `AWS_ACCESS_KEY_ID` | AWS access key for Secrets Manager |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret access key |
+| `AWS_REGION` | AWS region for Secrets Manager |
 
 ### `apps/widget` (.env)
 
@@ -719,6 +756,15 @@ Pivot Care AI/
 │       │       └── views/widget-view  # Main widget view controller
 │       └── components/providers.tsx    # Convex provider (no Clerk)
 │
+│   └── embed/                         # Embeddable JS Library (Vite)
+│       ├── embed.ts                   # Main embed entry point
+│       ├── config.ts                  # Embed configuration
+│       ├── icons.ts                   # Icon assets
+│       ├── vite.config.ts             # Vite build config
+│       ├── demo.html                  # Integration demo
+│       ├── landing.html               # Landing demo page
+│       └── dist/widget.iife.js        # Built IIFE output
+│
 ├── packages/
 │   ├── backend/                       # Convex Backend
 │   │   └── convex/
@@ -769,6 +815,7 @@ Pivot Care AI/
 Individual app commands:
 - `apps/web`: `next dev --port 3000`
 - `apps/widget`: `next dev --turbopack --port 3001`
+- `apps/embed`: `vite --port 3002`
 - `packages/backend`: `convex dev`
 
 ---
@@ -825,7 +872,17 @@ This installs dependencies for all apps (`web`, `widget`) and packages (`backend
 3. Create a **JWT Template** for Convex:
    - Go to **JWT Templates** → **New Template** → Select **Convex**
    - Note the **Issuer URL** (e.g., `https://your-clerk-instance.clerk.accounts.dev`)
-4. Collect these values from **API Keys** in the Clerk dashboard:
+4. Set up a **Webhook** for subscription events:
+   - Go to **Webhooks** in the left sidebar → **Add Endpoint**
+   - Set the **Endpoint URL** to your Convex HTTP action URL:
+     ```
+     https://<your-convex-site-url>/clerk-webhook
+     ```
+     > The `<your-convex-site-url>` is the value of `CONVEX_SITE_URL` from your Convex dashboard (e.g. `https://your-project-123.convex.site`)
+   - Under **Subscribe to events**, select: `subscription.updated`
+   - Click **Create** — Clerk will show you the **Signing Secret** (`whsec_...`)
+   - Save this value as `CLERK_WEBHOOK_SECRET` (used in Convex Dashboard env vars)
+5. Collect these values from **API Keys** in the Clerk dashboard:
    - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
    - `CLERK_SECRET_KEY`
 
@@ -862,17 +919,22 @@ This will prompt you to create a new project or link to an existing one. Select 
 |---|---|
 | `CLERK_JWT_ISSUER_DOMAIN` | Your Clerk JWT Issuer URL (from Step 3) |
 | `CLERK_SECRET_KEY` | Your Clerk secret key |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Your Google AI / Gemini API key |
+| `CLERK_WEBHOOK_SECRET` | Your Clerk webhook signing secret |
+| `OPENAI_API_KEY` | Your OpenAI API key |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Your Google Generative AI API key |
+| `AWS_ACCESS_KEY_ID` | Your AWS access key ID |
+| `AWS_SECRET_ACCESS_KEY` | Your AWS secret access key |
+| `AWS_REGION` | Your AWS region (e.g. `us-east-1`) |
 
 5. Note your **Convex Deployment URL** from the dashboard (e.g., `https://your-project-123.convex.cloud`)
 
 ---
 
-### Step 5: Set Up Google Gemini (AI)
+### Step 5: Set Up OpenAI (AI)
 
-1. Go to [Google AI Studio](https://aistudio.google.com/)
-2. Click **Get API Key** → **Create API Key**
-3. Copy the API key — you'll set this as `GOOGLE_GENERATIVE_AI_API_KEY` in Convex env vars (Step 4)
+1. Go to [OpenAI Platform](https://platform.openai.com/)
+2. Navigate to **API keys** → **Create new secret key**
+3. Copy the API key — you'll set this as `OPENAI_API_KEY` in Convex env vars (Step 4)
 
 ---
 
@@ -921,10 +983,14 @@ CONVEX_DEPLOYMENT=dev:your-project-123
 # They are listed here for reference only:
 # CLERK_JWT_ISSUER_DOMAIN=https://your-clerk-instance.clerk.accounts.dev
 # CLERK_SECRET_KEY=sk_test_xxxxxxxxxxxxx
-# GOOGLE_GENERATIVE_AI_API_KEY=AIzaSyXXXXXXXXXXXXXXXX
+# CLERK_WEBHOOK_SECRET=whsec_XXXXXXXXXXXXXXXXXXXX
+# OPENAI_API_KEY=sk-proj-XXXXXXXXXXXXXXXXXXXX
+# AWS_ACCESS_KEY_ID=AKIAXXXXXXXXXXXXXXXX
+# AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# AWS_REGION=us-east-1
 ```
 
-> **Note:** `CLERK_JWT_ISSUER_DOMAIN`, `CLERK_SECRET_KEY`, and `GOOGLE_GENERATIVE_AI_API_KEY` must be set as **Convex Dashboard environment variables**, not in the local `.env.local` file. Convex serverless functions read env vars from the dashboard, not from local files.
+> **Note:** All variables above — `CLERK_JWT_ISSUER_DOMAIN`, `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SECRET`, `OPENAI_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION` — must be set as **Convex Dashboard environment variables**, not in the local `.env.local` file. Convex serverless functions read env vars from the dashboard, not from local files.
 
 #### 6c. `apps/widget/.env.local`
 
@@ -1028,20 +1094,25 @@ If you want error tracking:
 │  ├── NEXT_PUBLIC_CONVEX_URL          ← Convex deployment URL     │
 │  ├── NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY  ← Clerk dashboard        │
 │  ├── CLERK_SECRET_KEY                ← Clerk dashboard           │
-│  ├── NEXT_PUBLIC_CLERK_SIGN_IN_URL   ← /sign-in                 │
-│  ├── NEXT_PUBLIC_CLERK_SIGN_UP_URL   ← /sign-up                 │
-│  └── SENTRY_AUTH_TOKEN               ← Sentry (optional)        │
+│  ├── NEXT_PUBLIC_CLERK_SIGN_IN_URL   ← /sign-in                  │
+│  ├── NEXT_PUBLIC_CLERK_SIGN_UP_URL   ← /sign-up                  │
+│  └── SENTRY_AUTH_TOKEN               ← Sentry (optional)         │
 │                                                                  │
 │  apps/widget/.env.local                                          │
 │  └── NEXT_PUBLIC_CONVEX_URL          ← Same Convex URL           │
 │                                                                  │
 │  packages/backend/.env.local                                     │
-│  └── CONVEX_DEPLOYMENT               ← Auto-set by convex dev   │
+│  └── CONVEX_DEPLOYMENT               ← Auto-set by convex dev    │
 │                                                                  │
 │  Convex Dashboard (dashboard.convex.dev → Environment Variables) │
-│  ├── CLERK_JWT_ISSUER_DOMAIN         ← Clerk JWT template URL   │
+│  ├── CLERK_JWT_ISSUER_DOMAIN         ← Clerk JWT template URL    │
 │  ├── CLERK_SECRET_KEY                ← Clerk dashboard           │
-│  └── GOOGLE_GENERATIVE_AI_API_KEY    ← Google AI Studio          │
+│  ├── CLERK_WEBHOOK_SECRET            ← Clerk dashboard           │
+│  ├── OPENAI_API_KEY                  ← OpenAI platform           │
+│  ├── GOOGLE_GENERATIVE_AI_API_KEY    ← Google AI Studio          │
+│  ├── AWS_ACCESS_KEY_ID               ← AWS IAM credentials       │
+│  ├── AWS_SECRET_ACCESS_KEY           ← AWS IAM credentials       │
+│  └── AWS_REGION                      ← AWS region (e.g. us-east-1)│
 │                                                                  │
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -1056,7 +1127,7 @@ If you want error tracking:
 | Clerk sign-in page doesn't load | Verify `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is correct in `apps/web/.env.local` |
 | "Missing NEXT_PUBLIC_CONVEX_URL" error | Ensure `.env.local` exists in the app directory with the correct Convex URL |
 | Convex functions fail with auth errors | Verify `CLERK_JWT_ISSUER_DOMAIN` is set correctly on the **Convex Dashboard** (not local env) |
-| AI agent doesn't respond | Check that `GOOGLE_GENERATIVE_AI_API_KEY` is set on the **Convex Dashboard** and the key has Gemini API enabled |
+| AI agent doesn't respond | Check that `OPENAI_API_KEY` is set on the **Convex Dashboard** and the key has access to GPT-4o |
 | Widget shows "Organization not valid" | The `organizationId` query param must match a real Clerk organization ID. Check Clerk dashboard for org IDs. |
 | Port 3000/3001 already in use | Kill existing processes: `npx kill-port 3000 3001` or change ports in the respective `package.json` scripts |
 | `convex dev` fails to connect | Run `npx convex login` again and ensure `CONVEX_DEPLOYMENT` is set in `packages/backend/.env.local` |
