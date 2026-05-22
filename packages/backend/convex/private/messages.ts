@@ -1,7 +1,7 @@
 import { ConvexError, convexToJson, v } from "convex/values";
 import { generateText } from "ai";
 import { action, mutation, query } from "../_generated/server";
-import { components } from "../_generated/api";
+import { components, internal } from "../_generated/api";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { paginationOptsValidator } from "convex/server";
 import { saveMessage } from "@convex-dev/agent";
@@ -31,19 +31,33 @@ export const enhanceResponse = action({
       });
     }
 
+    const subscription = await ctx.runQuery(
+      internal.system.subscription.getByOrganizationId,
+      {
+        organizationId: orgId,
+      },
+    );
+
+    if (subscription?.status !== "active"){
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Missing Subscription"
+      });
+    };
+
     const response = await generateText({
-        model: openai("gpt-4o"),
-        messages: [
-            {
-                role: "system",
-                content: OPERATOR_MESSAGE_ENHANCEMENT_PROMPT,
-            },
-            {
-                role: "user",
-                content: args.prompt,
-            }
-        ]
-    })
+      model: openai("gpt-4o"),
+      messages: [
+        {
+          role: "system",
+          content: OPERATOR_MESSAGE_ENHANCEMENT_PROMPT,
+        },
+        {
+          role: "user",
+          content: args.prompt,
+        },
+      ],
+    });
 
     return response.text;
   },

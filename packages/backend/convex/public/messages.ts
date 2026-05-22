@@ -1,5 +1,5 @@
 import { ConvexError, convexToJson, v } from "convex/values";
-import { action, query } from "../_generated/server";
+import { action, internalAction, query } from "../_generated/server";
 import { components, internal } from "../_generated/api";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { paginationOptsValidator } from "convex/server";
@@ -50,8 +50,19 @@ export const create = action({
       });
     }
 
-    // TODO: Implement subscription check
-    const shouldTriggerAgent = conversation.status === "unresolved";
+    //this refreshes the users session if they are within the threshold
+    await ctx.runMutation(internal.system.contactSessions.refresh, {
+      contactSessionId: args.contactSessionId,
+    })
+
+    const subscription = await ctx.runQuery(
+      internal.system.subscription.getByOrganizationId,
+      {
+        organizationId: conversation.organizationId,
+      },
+    );
+
+    const shouldTriggerAgent = conversation.status === "unresolved" && subscription?.status === "active";
 
     if (shouldTriggerAgent) {
       await supportAgent.generateText(
