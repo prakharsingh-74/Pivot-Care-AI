@@ -7,7 +7,7 @@ import { ContactPanel } from "../components/contact-panel";
 
 export const ConversationIdLayout = ({children}: {children: React.ReactNode}) => {
    return (
-     <ResizablePanelGroup className="h-full flex-1" direction="horizontal">
+     <ResizablePanelGroup className="h-full flex-1" orientation="horizontal">
         <ResizablePanel className="h-full" defaultSize={60}>
             <div className="flex h-full flex-1 flex-col">
                 {children}

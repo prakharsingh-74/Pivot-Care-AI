@@ -116,7 +116,7 @@ export const ContactPanel = () => {
                     },
                     {
                         label: "Cookies",
-                        value: contactSession.metadata.CookieEnabled ? "Enabled" : "Disabled ",
+                        value: contactSession.metadata.cookiesEnabled ? "Enabled" : "Disabled ",
                     },
                 ],
             },
