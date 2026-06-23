@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-const WEB_APP_URL = process.env.NEXT_PUBLIC_WEB_APP_URL || "http://localhost:3000";
+const WEB_APP_URL = process.env.NEXT_PUBLIC_WEB_APP_URL 
 
 export function FinalCTA() {
   const shouldReduceMotion = useReducedMotion()
