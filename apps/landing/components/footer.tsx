@@ -62,8 +62,7 @@ export function Footer() {
 
         <div className="mt-8 sm:mt-12 pt-4 sm:pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[10px] sm:text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Pivot Care AI. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} Pivot Care AI. All rights reserved -NOTxSanchar.
           </p>
           <div className="flex items-center gap-4">
             <Link

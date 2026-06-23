@@ -6,6 +6,14 @@ import { Star } from "lucide-react";
 const testimonials = [
   {
     quote:
+      "Integrating Pivot Care AI was incredibly seamless. Within weeks, we saw a massive drop in repetitive queries, allowing our core team to focus entirely on scaling our product.",
+    author: "Shresth Pandey",
+    role: "Founder",
+    company: "Delelu",
+    avatar: "/Shresth.jpeg",
+  },
+  {
+    quote:
       "Pivot Care AI cut our support ticket volume by 70%. Our team now focuses on complex issues while AI handles the rest.",
     author: "Sarah Chen",
     role: "Head of Support",
