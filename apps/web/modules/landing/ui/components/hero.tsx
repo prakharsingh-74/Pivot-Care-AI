@@ -1,12 +1,10 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { Button } from "./ui/button"
 import { ArrowRight, Command, CornerDownLeft } from "lucide-react"
 import { motion, useReducedMotion } from "framer-motion"
 import { useState, useEffect } from "react"
 import Link from "next/link"
-
-const WEB_APP_URL = process.env.NEXT_PUBLIC_WEB_APP_URL || "http://localhost:3000";
 
 const examplePrompts = [
   "Help me reset my password...",
@@ -40,7 +38,7 @@ export function Hero() {
       return
     }
 
-    const currentPrompt = examplePrompts[promptIndex]
+    const currentPrompt = examplePrompts[promptIndex] || ""
     let charIndex = 0
     let timeout: NodeJS.Timeout
 
@@ -177,7 +175,7 @@ export function Hero() {
             className="flex flex-col sm:flex-row items-center justify-center gap-3"
           >
             <Button size="xl" rounded="full" className="gap-2 w-full sm:w-auto" asChild>
-              <Link href={`${WEB_APP_URL}/sign-up`}>
+              <Link href="/sign-up">
                 Start Free Trial
                 <ArrowRight className="w-4 h-4" />
               </Link>

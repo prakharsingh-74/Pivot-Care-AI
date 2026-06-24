@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 import {
   Menu,
   X,
@@ -33,8 +33,6 @@ const navLinks = [
   { href: "#pricing", label: "Pricing" },
   { href: "#docs", label: "Docs" },
 ];
-
-const WEB_APP_URL = process.env.NEXT_PUBLIC_WEB_APP_URL || "http://localhost:3000";
 
 const workflowItems = [
   {
@@ -310,10 +308,10 @@ export function Navbar() {
           {/* Desktop Buttons - hidden below lg */}
           <div className="hidden lg:flex items-center gap-3">
             <Button variant="ghost" size="sm" rounded="full" asChild>
-              <Link href={`${WEB_APP_URL}/sign-in`}>Log in</Link>
+              <Link href="/sign-in">Log in</Link>
             </Button>
             <Button size="sm" rounded="full" className="gap-1.5" asChild>
-              <Link href={`${WEB_APP_URL}/sign-up`}>
+              <Link href="/sign-up">
                 Get Started
                 <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
               </Link>
@@ -466,12 +464,12 @@ export function Navbar() {
                   className="justify-center text-base py-6 w-full"
                   asChild
                 >
-                  <Link href={`${WEB_APP_URL}/sign-in`} onClick={() => setMobileMenuOpen(false)}>
+                  <Link href="/sign-in" onClick={() => setMobileMenuOpen(false)}>
                     Log in
                   </Link>
                 </Button>
                 <Button rounded="full" className="py-6 text-base w-full" asChild>
-                  <Link href={`${WEB_APP_URL}/sign-up`} onClick={() => setMobileMenuOpen(false)}>
+                  <Link href="/sign-up" onClick={() => setMobileMenuOpen(false)}>
                     Get Started
                   </Link>
                 </Button>

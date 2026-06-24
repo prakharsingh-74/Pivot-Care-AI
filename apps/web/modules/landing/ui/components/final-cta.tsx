@@ -2,10 +2,8 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "./ui/button"
 import Link from "next/link"
-
-const WEB_APP_URL = process.env.NEXT_PUBLIC_WEB_APP_URL 
 
 export function FinalCTA() {
   const shouldReduceMotion = useReducedMotion()
@@ -18,7 +16,7 @@ export function FinalCTA() {
           border: "1px dashed",
           borderColor: "oklch(0.92 0.16 130 / 0.4)",
           borderDasharray: "12 8",
-        }}
+        } as React.CSSProperties}
       >
         <div className="relative max-w-3xl mx-auto text-center">
           <motion.div
@@ -34,7 +32,7 @@ export function FinalCTA() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="xl" rounded="full" className="gap-2 min-w-[200px]" asChild>
-                <Link href={`${WEB_APP_URL}/sign-up`}>
+                <Link href="/sign-up">
                   Get Started Free
                   <ArrowRight className="w-4 h-4" />
                 </Link>

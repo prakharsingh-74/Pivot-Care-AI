@@ -3,8 +3,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Pivot Care AI Lime theme - #d9f99d accent with #bef264 hover */
-:root {
+/* Scoped Pivot Care AI Lime theme - #d9f99d accent with #bef264 hover */
+.landing-theme {
   --background: oklch(0.08 0 0);
   --foreground: oklch(0.95 0 0);
   --card: oklch(0.11 0 0);
@@ -87,13 +87,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+.landing-theme * {
+  border-color: var(--border);
+  outline-color: calc(var(--ring) / 0.5);
+}
+
+.landing-theme {
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 /* Updated glow to use Pivot Care AI lime instead of teal */
@@ -158,5 +159,3 @@ html {
 .tracking-display {
   letter-spacing: -0.02em;
 }
-
-/* Removed hero-breathe animation - replaced with mouse parallax */

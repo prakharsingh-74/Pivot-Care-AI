@@ -2,10 +2,8 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 import { Check, ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "./ui/button"
 import Link from "next/link"
-
-const WEB_APP_URL = process.env.NEXT_PUBLIC_WEB_APP_URL || "http://localhost:3000";
 
 const plans = [
   {
@@ -93,7 +91,7 @@ export function Pricing() {
               </ul>
 
               <Button variant={plan.featured ? "default" : "outline"} size="lg" rounded="full" className="w-full gap-2" asChild>
-                <Link href={`${WEB_APP_URL}/sign-up`}>
+                <Link href="/sign-up">
                   {plan.cta}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
