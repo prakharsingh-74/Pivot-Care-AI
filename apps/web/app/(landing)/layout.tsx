@@ -31,17 +31,15 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 }
 
-export default function RootLayout({
+export default function LandingLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark ${_ptMono.variable}`}>
-      <body className="font-sans antialiased min-h-screen landing-theme">
-        {children}
-        <Analytics />
-      </body>
-    </html>
+    <div className={`landing-theme dark min-h-screen font-sans antialiased ${_ptMono.variable}`}>
+      {children}
+      <Analytics />
+    </div>
   )
 }
