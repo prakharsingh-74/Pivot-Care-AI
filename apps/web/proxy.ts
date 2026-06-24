@@ -15,6 +15,12 @@ const isOrgFreeRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, orgId } = await auth();
+  const url = new URL(req.url);
+
+  // If the user is authenticated and hits '/', redirect to '/conversations'
+  if (userId && url.pathname === "/") {
+    return NextResponse.redirect(new URL("/conversations", req.url));
+  }
 
   if (!isPublicRoute(req)) {
     await auth.protect();
