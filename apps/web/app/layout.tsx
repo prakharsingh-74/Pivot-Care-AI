@@ -1,5 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs"
 import { Geist, Geist_Mono } from "next/font/google"
+import { Analytics } from "@vercel/analytics/next"
 
 import "@workspace/ui/globals.css"
 import { Providers } from "@/components/providers"
@@ -37,6 +38,7 @@ export default function RootLayout({
               {children}
           </Providers>
         </ClerkProvider>
+        <Analytics />
       </body>
     </html>
   )
