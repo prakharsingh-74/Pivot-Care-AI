@@ -192,7 +192,7 @@ export function Hero() {
         initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.7 }}
-        className="absolute bottom-0 left-0 right-0 py-6 sm:py-8 border-t border-border/30 bg-background/80 backdrop-blur-sm"
+        className="absolute bottom-0 left-0 right-0 py-6 sm:py-8 bg-background/80 backdrop-blur-sm"
       >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-xs sm:text-sm text-muted-foreground/60 mb-4 sm:mb-6 text-center">

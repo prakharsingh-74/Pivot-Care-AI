@@ -87,11 +87,6 @@ const toolsMenu = {
       category: "AI Agents",
       items: [
         {
-          href: "/tools/paid/ai-agent-builder",
-          label: "AI Agent Builder",
-          icon: Bot,
-        },
-        {
           href: "/tools/paid/intent-detection",
           label: "Intent Detection",
           icon: Sparkles,

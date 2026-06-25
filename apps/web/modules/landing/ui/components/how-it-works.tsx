@@ -20,7 +20,7 @@ const steps = [
     icon: MessageSquare,
     title: "Deploy",
     description:
-      "Go live across chat, email, and social. AI handles inquiries 24/7 while you focus on growth.",
+      "Go live across your business. AI handles inquiries 24/7 while you focus on growth.",
   },
 ];
 

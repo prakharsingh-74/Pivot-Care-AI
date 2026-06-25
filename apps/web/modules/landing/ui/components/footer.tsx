@@ -3,18 +3,16 @@ import Image from "next/image";
 
 const footerLinks = {
   Product: [
-    { label: "Features", href: "#features" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "API Docs", href: "#docs" },
+    { label: "API Docs", target: "_blank", href: "#docs" },
   ],
   Company: [
-    { label: "About", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Careers", href: "https://www.linkedin.com/company/xnot/jobs/" },
+    { label: "About", target: "_blank", href: "#" },
+    { label: "Blog", target: "_blank", href: "#" },
+    { label: "Careers", target: "_blank", href: "https://www.linkedin.com/company/xnot/jobs/" },
   ],
   Legal: [
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
+    { label: "Privacy", target: "_blank", href: "#" },
+    { label: "Terms", target: "_blank", href: "#" },
   ],
 };
 
@@ -62,7 +60,9 @@ export function Footer() {
 
         <div className="mt-8 sm:mt-12 pt-4 sm:pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[10px] sm:text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Pivot Care AI. All rights reserved -NOTxSanchar.
+            &copy; {new Date().getFullYear()} Pivot Care AI. All rights reserved.
+            <br />
+            Powered by <Link href="https://notxsanchar.vercel.app" target="_blank">NoTxSanchar</Link>
           </p>
           <div className="flex items-center gap-4">
             <Link

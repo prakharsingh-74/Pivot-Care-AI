@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 
 const stats = [
-  { value: "70%", label: "reduction in ticket volume" },
+  { value: "Upto 70%", label: "reduction in ticket volume" },
   { value: "< 5s", label: "average response time" },
   { value: "10K+", label: "support teams using Pivot Care AI" },
 ];
