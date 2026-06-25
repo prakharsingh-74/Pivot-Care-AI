@@ -1,22 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import Image from "next/image";
-
-const defaultSignInContent = {
-  quote: {
-    text: "This platform has helped me save time and serve my clients faster than ever before.",
-    author: "Pivot Care AI",
-  },
-};
-
-const defaultSignUpContent = {
-  quote: {
-    text: "Join thousands of teams using AI to transform their customer care workflows.",
-    author: "Pivot Care AI",
-  },
-};
 
 function FloatingPaths({ position }: { position: number }) {
   const paths = Array.from({ length: 36 }, (_, i) => ({
@@ -34,7 +18,7 @@ function FloatingPaths({ position }: { position: number }) {
   return (
     <div className="pointer-events-none absolute inset-0">
       <svg
-        className="h-full w-full text-slate-950 dark:text-white"
+        className="h-full w-full text-slate-150 dark:text-white"
         viewBox="0 0 696 316"
         fill="none"
       >
@@ -65,13 +49,8 @@ function FloatingPaths({ position }: { position: number }) {
 }
 
 export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname();
-  const isSignUp = pathname?.includes("sign-up");
-
-  const currentContent = isSignUp ? defaultSignUpContent : defaultSignInContent;
-
   return (
-    <div className="w-full min-h-screen flex flex-col md:flex-row overflow-hidden bg-background">
+    <div className="relative min-h-screen w-full overflow-hidden bg-background flex items-center justify-center">
       <style>{`
         input[type="password"]::-ms-reveal,
         input[type="password"]::-ms-clear {
@@ -79,52 +58,18 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         }
       `}</style>
 
-      {/* Auth Card/Form Column */}
-      <motion.div
-        layout
-        transition={{ type: "spring", stiffness: 90, damping: 20 }}
-        className="w-full md:w-1/2 min-h-screen flex items-center justify-center p-6 bg-background z-10"
-        style={{ order: isSignUp ? 2 : 1 }}
-      >
-        <div className="w-full max-w-md flex justify-center">{children}</div>
-      </motion.div>
+      {/* Full-page FloatingPaths background */}
+      <div className="absolute inset-0 z-0">
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
+      </div>
 
-      {/* Showcase Column — FloatingPaths Animation */}
-      <motion.div
-        layout
-        transition={{ type: "spring", stiffness: 90, damping: 20 }}
-        className="hidden md:flex md:w-1/2 relative overflow-hidden flex-col items-start justify-between p-10 h-screen bg-muted/60 border-r border-border"
-        style={{ order: isSignUp ? 1 : 2 }}
-      >
-        {/* Bottom fade overlay (same as reference) */}
-        <div className="from-background absolute inset-0 z-10 bg-gradient-to-t to-transparent pointer-events-none" />
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,hsl(var(--background)/0.6)_100%)] pointer-events-none" />
 
-        {/* FloatingPaths SVG animation in background */}
-        <div className="absolute inset-0 z-0">
-          <FloatingPaths position={1} />
-          <FloatingPaths position={-1} />
-        </div>
-
-        {/* Top branding */}
-        <div className="relative z-20 flex items-center gap-2">
-          <Image src="/icon.png" alt="Pivot Care AI Logo" width={40} height={40} />
-          <span className="text-foreground font-bold text-lg tracking-tight">
-            Pivot Care <span className="text-lime-400">AI</span>
-          </span>
-        </div>
-
-        {/* Bottom glassmorphic quote card */}
-        <div className="relative z-20 w-full">
-          <blockquote className="space-y-2">
-            <p className="text-xl text-foreground font-medium">
-              &ldquo;{currentContent.quote.text}&rdquo;
-            </p>
-            <footer className="font-mono text-sm font-semibold text-muted-foreground">
-              ~ {currentContent.quote.author}
-            </footer>
-          </blockquote>
-        </div>
-      </motion.div>
+      {/* Auth card */}
+      <div className="relative z-10 w-full max-w-md px-4">
+        {children}
+      </div>
     </div>
   );
 };
