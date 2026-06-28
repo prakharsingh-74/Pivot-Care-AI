@@ -235,7 +235,7 @@ async function convertEntryToPublicFile(
 ): Promise<PublicFile> {
   const metadata = entry.metadata as EntryMetadata | undefined;
   const storageId = metadata?.storageId;
-  let fileSize = "unKnown";
+  let fileSize = "Unknown";
 
   if (storageId) {
     try {

@@ -57,6 +57,13 @@ http.route({
 })
 
 async function validateRequest (req: Request): Promise<WebhookEvent | null > {
+    const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+
+    if (!webhookSecret) {
+        console.error("CLERK_WEBHOOK_SECRET is not set — rejecting webhook");
+        return null;
+    }
+
     const payloadString = await req.text();
     const svixHeaders = {
         "svix-id": req.headers.get("svix-id") || "",
@@ -64,7 +71,7 @@ async function validateRequest (req: Request): Promise<WebhookEvent | null > {
         "svix-signature": req.headers.get("svix-signature") || "",
     };
 
-    const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET || "");
+    const wh = new Webhook(webhookSecret);
 
     try {
         return wh.verify(payloadString, svixHeaders) as unknown as WebhookEvent;
