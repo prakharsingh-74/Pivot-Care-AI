@@ -37,6 +37,19 @@ export default defineSchema({
         v.literal("escalated"),
         v.literal("resolved")
        ),
+       wasEscalated: v.optional(v.boolean()),
+       escalatedAt: v.optional(v.number()),
+       resolvedAt: v.optional(v.number()),
+       firstResponseTime: v.optional(v.number()),
+       resolutionTime: v.optional(v.number()),
+       sentiment: v.optional(v.union(
+        v.literal("positive"),
+        v.literal("neutral"),
+        v.literal("negative"),
+        v.literal("mixed")
+       )),
+       category: v.optional(v.string()),
+       summary: v.optional(v.string()),
     }).index("by_organization_id", ["organizationId"])
     .index("by_contact_session_id", ["contactSessionId"])
     .index("by_thread_id", ["threadId"])
