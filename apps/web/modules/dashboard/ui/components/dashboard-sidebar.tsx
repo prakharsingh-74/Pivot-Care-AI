@@ -2,6 +2,7 @@
 
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { 
+    BarChart3,
     CreditCardIcon,
     InboxIcon,
     LayoutDashboardIcon,
@@ -55,6 +56,11 @@ const configurationItems = [
         title: "Voice Assistant",
         url: "/plugins/vapi",
         icon: Mic,
+    },
+    {
+        title: "Analytics",
+        url: "/analytics",
+        icon: BarChart3
     }
 ];
 
