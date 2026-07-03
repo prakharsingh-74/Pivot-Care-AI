@@ -91,7 +91,7 @@ export const WidgetAuthScreen = () => {
                 <FormControl>
                   <Input
                     className="h-10 bg-background"
-                    placeholder="e.g. John Doe"
+                    placeholder="Your Name"
                     type="text"
                     {...field}
                   />
@@ -109,7 +109,7 @@ export const WidgetAuthScreen = () => {
                 <FormControl>
                   <Input
                     className="h-10 bg-background"
-                    placeholder="e.g. johndoe@example.com"
+                    placeholder="Your Email"
                     type="email"
                     {...field}
                   />

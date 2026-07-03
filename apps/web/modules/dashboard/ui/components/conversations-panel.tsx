@@ -29,6 +29,7 @@ import { ConversationStatusIcon } from "@workspace/ui/components/conversation-st
 import { useAtomValue, useSetAtom } from "jotai/react";
 import { statusFilterAtom } from "@/modules/dashboard/atoms";
 import { Skeleton } from "@workspace/ui/components/skeleton";
+import { SidebarTrigger } from "@workspace/ui/components/sidebar";
 
 export const ConversationsPanel = () => {
   const pathname = usePathname();
@@ -61,7 +62,8 @@ export const ConversationsPanel = () => {
 
   return (
     <div className="flex h-full w-full flex-col bg-background text-sidebar-foreground">
-      <div className="flex flex-col gap-3.5 border-b p-2">
+      <div className="flex items-center gap-1 border-b p-2">
+        <SidebarTrigger />
         <Select
           defaultValue="all"
           onValueChange={(value) =>
