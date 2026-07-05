@@ -2,7 +2,6 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, PT_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
-import Script from "next/script"
 import "./landing-globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -112,11 +111,6 @@ export default function LandingLayout({
       />
       {children}
       <Analytics />
-      <Script
-        src="https://pivotcareai-widget.vercel.app/widget.js"
-        data-organization-id="org_39eDHeHD30318KlFIZEjPaGnjqI"
-        strategy="afterInteractive"
-      />
     </div>
   )
 }
