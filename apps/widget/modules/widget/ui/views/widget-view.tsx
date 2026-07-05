@@ -1,7 +1,8 @@
 'use client';
 
+import { useEffect } from "react";
 import { useAtomValue } from "jotai";
-import { screenAtom } from "@/modules/widget/atoms/widget-atoms";
+import { screenAtom, widgetSettingsAtom } from "@/modules/widget/atoms/widget-atoms";
 import { WidgetAuthScreen } from "@/modules/widget/ui/screens/widget-auth-screen";
 import { WidgetErrorScreen } from "@/modules/widget/ui/screens/widget-error-screen";
 import { WidgetLoadingScreen } from "@/modules/widget/ui/screens/widget-loading-screen";
@@ -17,6 +18,16 @@ interface Props{
 
 export default function WidgetView({organizationId}: Props){
     const screen = useAtomValue(screenAtom);
+    const widgetSettings = useAtomValue(widgetSettingsAtom);
+
+    useEffect(() => {
+        if (widgetSettings?.primaryColor && typeof window !== "undefined") {
+            window.parent.postMessage({
+                type: "SET_COLOR",
+                payload: { primaryColor: widgetSettings.primaryColor }
+            }, "*");
+        }
+    }, [widgetSettings?.primaryColor]);
 
     const screenComponents = {
         error: <WidgetErrorScreen/>,
