@@ -9,3 +9,4 @@
 - **Antigravity**: Implemented Advanced Analytics & Support Insights module (`/analytics`), including AI-driven sentiment/category backfilling via OpenAI GPT-4o, Recharts visualizations, KPI metrics, and support audit log tables.
 - **Antigravity**: Eliminated horizontal scrollbars across Analytics page by hardening CSS layout constraints (`overflow-x-hidden min-w-0 max-w-full`) and setting responsive table column visibility. Created TestSprite test plan (`analytics-plan.json`) for dashboard E2E verification.
 - **Antigravity**: Configured GitHub Actions CI pipeline (`.github/workflows/testsprite.yml`) to automatically run TestSprite verification suite on every push and pull request to `main` and `development`.
+- **Antigravity**: Implemented Widget Theme & Brand Color customization module with 8 preset color swatches, native HEX color picker, real-time interactive widget preview card, and dynamic widget header branding.
